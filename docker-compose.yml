@@ -1,0 +1,49 @@
+services:
+  openclaw-gateway:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw-gateway
+    ports:
+      - "18789:18789"
+      - "18790:18790"
+    volumes:
+      - ~/.openclaw:/home/node/.openclaw
+    networks:
+      - claude-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:18789/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  claude-proxy:
+    build: .
+    container_name: claude-proxy
+    ports:
+      - "3000:3000"
+    environment:
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
+    volumes:
+      - claude-auth:/home/claude-user/.claude
+    networks:
+      - claude-net
+    restart: unless-stopped
+
+  port-bridge:
+    image: alpine/socat
+    container_name: port-bridge
+    command: TCP-LISTEN:8181,fork,reuseaddr TCP:claude-proxy:8181
+    ports:
+      - "8181:8181"
+    networks:
+      - claude-net
+    depends_on:
+      - claude-proxy
+    restart: unless-stopped
+
+networks:
+  claude-net:
+    driver: bridge
+
+volumes:
+  claude-auth:

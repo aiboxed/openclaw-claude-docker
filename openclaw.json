@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.24"
+  },
+  "models": {
+    "providers": {
+      "claude-proxy": {
+        "baseUrl": "http://claude-proxy:3000/v1",
+        "apiKey": "dummy",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "claude-sonnet-4-6",
+            "name": "Claude Sonnet 4.6 (default)",
+            "reasoning": false,
+            "input": ["text"],
+            "contextWindow": 200000,
+            "maxTokens": 64000
+          },
+          {
+            "id": "claude-opus-4-6",
+            "name": "Claude Opus 4.6",
+            "reasoning": false,
+            "input": ["text"],
+            "contextWindow": 200000,
+            "maxTokens": 64000
+          },
+          {
+            "id": "claude-haiku-4-5",
+            "name": "Claude Haiku 4.5 (fast)",
+            "reasoning": false,
+            "input": ["text"],
+            "contextWindow": 200000,
+            "maxTokens": 32000
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "sandbox": {
+        "mode": "off"
+      },
+      "model": {
+        "primary": "claude-proxy/claude-sonnet-4-6"
+      }
+    }
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "gateway": {
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": {
+      "allowedOrigins": [
+        "http://localhost:18789",
+        "http://127.0.0.1:18789"
+      ]
+    }
+  }
+}
